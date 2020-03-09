@@ -4,6 +4,8 @@ using Toybox.System;
 using Toybox.Lang;
 using Toybox.Application;
 using Toybox.ActivityMonitor;
+using Toybox.Time;
+using Toybox.Time.Gregorian;
 
 class cara1View extends WatchUi.WatchFace {
 
@@ -48,24 +50,17 @@ class cara1View extends WatchUi.WatchFace {
         //
 		dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_BLACK);
 		dc.clear();         
-                       
-        //           
-		// Top circle
-        //
-		dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_RED);
-        dc.fillCircle(cx, cy, 60);
 
 		//
-		// Bottom circle
+		// Circle
 		//                       
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
-        dc.setPenWidth(2);
-     	for( var i = 0; i < 60; i++) {
-	     	dc.drawArc(cx, cy, i, Toybox.Graphics.ARC_CLOCKWISE, 0, 180);
-    	}
+		drawCircle(dc, cx, cy, 61, Graphics.COLOR_WHITE);
+		drawCircle(dc, cx, cy, 5, Graphics.COLOR_BLACK);
+		drawSemiCircle(dc, cx, cy - 6, 60, Graphics.COLOR_DK_GREEN, Toybox.Graphics.ARC_COUNTER_CLOCKWISE);
+    	drawSemiCircle(dc, cx, cy + 6, 60, Graphics.COLOR_RED, Toybox.Graphics.ARC_CLOCKWISE);
      	
         //
-        // Battery
+        // Battery	
         //
         var myStats = System.getSystemStats();		
         var bitmap;
@@ -81,21 +76,37 @@ class cara1View extends WatchUi.WatchFace {
 			bitmap = bitmapBattery000;
 		}
         
-        var bx = cx - (bitmap.getWidth() / 2) - (cx/4);
-        var by = cy - (bitmap.getHeight() / 2) - 35;
+        var bx = cx - (bitmap.getWidth() / 2) - (cx/2) + 5;
+        var by = cy - (bitmap.getHeight() / 2);
         dc.drawBitmap(bx, by, bitmap);
-		dc.setColor(textColor, Graphics.COLOR_TRANSPARENT);
-		var textBat = myStats.battery.format("%02d") + "%";
-		var dimsBat = dc.getTextDimensions(textBat, Graphics.FONT_SYSTEM_XTINY);
-        dc.drawText(cx - (cx/4), by + dimsBat[1] / 2, Graphics.FONT_SYSTEM_XTINY, textBat, Graphics.TEXT_JUSTIFY_CENTER);
         
         //
         // Calories
         //       
-        bx = (dc.getWidth() / 2) - (bitmapFire.getWidth() / 2) + (cx/4);
-        by = (dc.getHeight() / 2) - (bitmapFire.getHeight() / 2) - 35;        
-        dc.drawBitmap(bx, by, bitmapFire);
+        var cals = ActivityMonitor.getInfo().calories;        
+        if (cals != null) {
+        	var calsString = cals.format("%d");
+        	dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        	var dims = dc.getTextDimensions(calsString, Graphics.FONT_SYSTEM_XTINY);
+        	dc.drawText(cx, cy + (dims[1] / 2) + 5, Graphics.FONT_SYSTEM_XTINY, calsString, Graphics.TEXT_JUSTIFY_CENTER);
+        	dc.drawText(cx, cy + (dims[1] * 1.2) + 5, Graphics.FONT_SYSTEM_XTINY, "kcal", Graphics.TEXT_JUSTIFY_CENTER);
+        }
         
+        //
+        // Date
+        //
+		var today = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
+		var dateString = Lang.format(
+		    "$1$ $2$",
+		    [
+		        today.day,
+		        today.month
+		    ]
+		);        
+        var customFont = WatchUi.loadResource(Rez.Fonts.custom_font_16);
+    	dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
+    	var dimsDate = dc.getTextDimensions(dateString, customFont);
+    	dc.drawText(cx + (cx/4) + (dimsDate[0] / 2), cy - (dimsDate[1] / 2) - 2, customFont, dateString, Graphics.TEXT_JUSTIFY_CENTER);
                 
         //
         // Time
@@ -116,10 +127,24 @@ class cara1View extends WatchUi.WatchFace {
         }
         var timeString = Lang.format(timeFormat, [hours, clockTime.min.format("%02d")]);
 
-        dc.setColor(textColor, Graphics.COLOR_TRANSPARENT);  
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);  
         var dims = dc.getTextDimensions(timeString, Graphics.FONT_LARGE);
-		dc.drawText(cx, 25 + cy - (dims[1] / 2), Graphics.FONT_LARGE, timeString, Graphics.TEXT_JUSTIFY_CENTER);      	
+		dc.drawText(cx, cy - 30 - (dims[1] / 2), Graphics.FONT_LARGE, timeString, Graphics.TEXT_JUSTIFY_CENTER);      	
      	
+	}
+
+	function drawSemiCircle(dc, x, y, radius, color, attr) {
+        dc.setColor(color, color);
+        dc.setPenWidth(2);
+     	for( var i = 0; i < radius; i++) {
+	     	dc.drawArc(x, y, i, attr, 0, 180);
+    	}
+	}
+	
+	function drawCircle(dc, x, y, radius, color) {
+		dc.setColor(color, color);
+        dc.fillCircle(x, y, radius);
+	
 	}
 
     // Called when this View is removed from the screen. Save the
