@@ -53,11 +53,16 @@ class cara1View extends WatchUi.WatchFace {
 
 		//
 		// Circle
-		//                       
-		drawCircle(dc, cx, cy, 61, Graphics.COLOR_WHITE);
-		drawCircle(dc, cx, cy, 5, Graphics.COLOR_BLACK);
-		drawSemiCircle(dc, cx, cy - 6, 60, Graphics.COLOR_DK_GREEN, Toybox.Graphics.ARC_COUNTER_CLOCKWISE);
-    	drawSemiCircle(dc, cx, cy + 6, 60, Graphics.COLOR_RED, Toybox.Graphics.ARC_CLOCKWISE);
+		//                       			
+		drawSemiCircle(dc, cx, cy, 50, Graphics.COLOR_DK_GREEN, Toybox.Graphics.ARC_COUNTER_CLOCKWISE);
+    	drawSemiCircle(dc, cx, cy, 50, Graphics.COLOR_RED, Toybox.Graphics.ARC_CLOCKWISE);
+    	
+     	var w = 100;
+     	var h = 12;
+     	dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+     	dc.fillRectangle(cx - (w/2), cy - (h/2), w, h);
+     	
+     	drawCircle(dc, cx, cy, 4, Graphics.COLOR_BLACK);
      	
         //
         // Battery	
@@ -76,7 +81,7 @@ class cara1View extends WatchUi.WatchFace {
 			bitmap = bitmapBattery000;
 		}
         
-        var bx = cx - (bitmap.getWidth() / 2) - (cx/2) + 5;
+        var bx = cx - (bitmap.getWidth() / 2) - (cx/2) + (cx/6);
         var by = cy - (bitmap.getHeight() / 2);
         dc.drawBitmap(bx, by, bitmap);
         
@@ -88,8 +93,8 @@ class cara1View extends WatchUi.WatchFace {
         	var calsString = cals.format("%d");
         	dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         	var dims = dc.getTextDimensions(calsString, Graphics.FONT_SYSTEM_XTINY);
-        	dc.drawText(cx, cy + (dims[1] / 2) + 5, Graphics.FONT_SYSTEM_XTINY, calsString, Graphics.TEXT_JUSTIFY_CENTER);
-        	dc.drawText(cx, cy + (dims[1] * 1.2) + 5, Graphics.FONT_SYSTEM_XTINY, "kcal", Graphics.TEXT_JUSTIFY_CENTER);
+        	dc.drawText(cx, cy + (dims[1] / 2), Graphics.FONT_SYSTEM_XTINY, calsString, Graphics.TEXT_JUSTIFY_CENTER);
+        	dc.drawText(cx, cy + (dims[1] * 1.2), Graphics.FONT_SYSTEM_XTINY, "kcal", Graphics.TEXT_JUSTIFY_CENTER);
         }
         
         //
@@ -106,7 +111,7 @@ class cara1View extends WatchUi.WatchFace {
         var customFont = WatchUi.loadResource(Rez.Fonts.custom_font_16);
     	dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
     	var dimsDate = dc.getTextDimensions(dateString, customFont);
-    	dc.drawText(cx + (cx/4) + (dimsDate[0] / 2), cy - (dimsDate[1] / 2) - 2, customFont, dateString, Graphics.TEXT_JUSTIFY_CENTER);
+    	dc.drawText(cx + (cx/6) + (dimsDate[0] / 2), cy - (dimsDate[1] / 2) - 2, customFont, dateString, Graphics.TEXT_JUSTIFY_CENTER);
                 
         //
         // Time
@@ -128,8 +133,8 @@ class cara1View extends WatchUi.WatchFace {
         var timeString = Lang.format(timeFormat, [hours, clockTime.min.format("%02d")]);
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);  
-        var dims = dc.getTextDimensions(timeString, Graphics.FONT_LARGE);
-		dc.drawText(cx, cy - 30 - (dims[1] / 2), Graphics.FONT_LARGE, timeString, Graphics.TEXT_JUSTIFY_CENTER);      	
+        var dims = dc.getTextDimensions(timeString, Graphics.FONT_MEDIUM);
+		dc.drawText(cx, cy - 30 - (dims[1] / 2), Graphics.FONT_MEDIUM, timeString, Graphics.TEXT_JUSTIFY_CENTER);      	
      	
 	}
 
