@@ -93,7 +93,7 @@ class cara1View extends WatchUi.WatchFace {
 			bitmap = bitmapBattery000;
 		}
         
-        var bx = cx - (bitmap.getWidth() / 2) - (cx/2) + (cx/6);
+        var bx = cx - 28 - (bitmap.getWidth() / 2);
         var by = cy - (bitmap.getHeight() / 2);
         dc.drawBitmap(bx, by, bitmap);
         
@@ -106,15 +106,17 @@ class cara1View extends WatchUi.WatchFace {
         	dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
         	var dims = dc.getTextDimensions(calsString, fontRussoOne20);
         	dc.drawText(cx, cy + (dims[1] / 2), fontRussoOne20, calsString, Graphics.TEXT_JUSTIFY_CENTER);
-        	dc.drawText(cx, cy + (dims[1] * 1.2), fontRussoOne20, "kcal", Graphics.TEXT_JUSTIFY_CENTER);
+        	
+        	dims = dc.getTextDimensions("kcal", fontRussoOne16);
+        	dc.drawText(cx, cy + (dims[1] * 1.5), fontRussoOne16, "kcal", Graphics.TEXT_JUSTIFY_CENTER);
         }
         
         //
         // Date
         //
-		var today = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
+		var today = Gregorian.info(Time.now(), Time.FORMAT_SHORT);
 		var dateString = Lang.format(
-		    "$1$ $2$",
+		    "$1$-$2$",
 		    [
 		        today.day,
 		        today.month
@@ -123,7 +125,7 @@ class cara1View extends WatchUi.WatchFace {
         
     	dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
     	var dimsDate = dc.getTextDimensions(dateString, fontRussoOne14);
-    	dc.drawText(cx + (dimsDate[0] / 2) + 7, cy - (dimsDate[1] / 2), fontRussoOne14, dateString, Graphics.TEXT_JUSTIFY_CENTER);
+    	dc.drawText(cx + (dimsDate[0] / 2) + 15, cy - (dimsDate[1] / 2), fontRussoOne14, dateString, Graphics.TEXT_JUSTIFY_CENTER);
                 
         //
         // Time
