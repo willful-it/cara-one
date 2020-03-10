@@ -15,6 +15,12 @@ class cara1View extends WatchUi.WatchFace {
 	var bitmapBattery075;
 	var bitmapBattery100;
 	var bitmapFire;
+
+	var fontRussoOne14;
+	var fontRussoOne16;
+	var fontRussoOne20;
+	var fontRussoOne24;
+	var fontRussoOne28;
 	    
     function initialize() {
         WatchFace.initialize();
@@ -25,6 +31,12 @@ class cara1View extends WatchUi.WatchFace {
 		bitmapBattery075 = WatchUi.loadResource(Rez.Drawables.battery_075);
 		bitmapBattery100 = WatchUi.loadResource(Rez.Drawables.battery_100);		
 		bitmapFire = WatchUi.loadResource(Rez.Drawables.fire);
+		
+		fontRussoOne14 = WatchUi.loadResource(Rez.Fonts.font_russo_one_14);
+		fontRussoOne16 = WatchUi.loadResource(Rez.Fonts.font_russo_one_16);
+		fontRussoOne20 = WatchUi.loadResource(Rez.Fonts.font_russo_one_20);
+		fontRussoOne24 = WatchUi.loadResource(Rez.Fonts.font_russo_one_24);
+		fontRussoOne28 = WatchUi.loadResource(Rez.Fonts.font_russo_one_28);
     }
 
     // Load your resources here
@@ -92,9 +104,9 @@ class cara1View extends WatchUi.WatchFace {
         if (cals != null) {
         	var calsString = cals.format("%d");
         	dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        	var dims = dc.getTextDimensions(calsString, Graphics.FONT_SYSTEM_XTINY);
-        	dc.drawText(cx, cy + (dims[1] / 2), Graphics.FONT_SYSTEM_XTINY, calsString, Graphics.TEXT_JUSTIFY_CENTER);
-        	dc.drawText(cx, cy + (dims[1] * 1.2), Graphics.FONT_SYSTEM_XTINY, "kcal", Graphics.TEXT_JUSTIFY_CENTER);
+        	var dims = dc.getTextDimensions(calsString, fontRussoOne20);
+        	dc.drawText(cx, cy + (dims[1] / 2), fontRussoOne20, calsString, Graphics.TEXT_JUSTIFY_CENTER);
+        	dc.drawText(cx, cy + (dims[1] * 1.2), fontRussoOne20, "kcal", Graphics.TEXT_JUSTIFY_CENTER);
         }
         
         //
@@ -108,10 +120,10 @@ class cara1View extends WatchUi.WatchFace {
 		        today.month
 		    ]
 		);        
-        var customFont = WatchUi.loadResource(Rez.Fonts.custom_font_16);
+        
     	dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-    	var dimsDate = dc.getTextDimensions(dateString, customFont);
-    	dc.drawText(cx + (cx/6) + (dimsDate[0] / 2), cy - (dimsDate[1] / 2) - 2, customFont, dateString, Graphics.TEXT_JUSTIFY_CENTER);
+    	var dimsDate = dc.getTextDimensions(dateString, fontRussoOne14);
+    	dc.drawText(cx + (dimsDate[0] / 2) + 7, cy - (dimsDate[1] / 2), fontRussoOne14, dateString, Graphics.TEXT_JUSTIFY_CENTER);
                 
         //
         // Time
@@ -133,8 +145,8 @@ class cara1View extends WatchUi.WatchFace {
         var timeString = Lang.format(timeFormat, [hours, clockTime.min.format("%02d")]);
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);  
-        var dims = dc.getTextDimensions(timeString, Graphics.FONT_MEDIUM);
-		dc.drawText(cx, cy - 30 - (dims[1] / 2), Graphics.FONT_MEDIUM, timeString, Graphics.TEXT_JUSTIFY_CENTER);      	
+        var dims = dc.getTextDimensions(timeString, fontRussoOne28);
+		dc.drawText(cx, cy - 25 - (dims[1] / 2), fontRussoOne28, timeString, Graphics.TEXT_JUSTIFY_CENTER);      	
      	
 	}
 
