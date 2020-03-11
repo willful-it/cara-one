@@ -6,5 +6,6 @@
     <bitmap id="battery_075" filename="battery-075.png" />
     <bitmap id="battery_100" filename="battery-100.png" />
     <bitmap id="fire" filename="fire.png" />
-    <bitmap id="heart" filename="heartbeat.png" />       
+    <bitmap id="heart" filename="heartbeat.png" />
+    <bitmap id="envelope" filename="envelope.png" />       
 </drawables>

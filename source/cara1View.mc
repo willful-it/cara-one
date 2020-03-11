@@ -17,6 +17,7 @@ class cara1View extends WatchUi.WatchFace {
     var bitmapBattery100;
     var bitmapFire;
     var bitmapHeart;
+    var bitmapEnvelope;
 
     var fontRussoOne14;
     var fontRussoOne16;
@@ -26,7 +27,7 @@ class cara1View extends WatchUi.WatchFace {
     
     var showHeartBeat;
     var showHeart;
-        
+
     function initialize() {
         WatchFace.initialize();
         
@@ -37,6 +38,7 @@ class cara1View extends WatchUi.WatchFace {
         bitmapBattery100 = WatchUi.loadResource(Rez.Drawables.battery_100);
         bitmapFire = WatchUi.loadResource(Rez.Drawables.fire);
         bitmapHeart = WatchUi.loadResource(Rez.Drawables.heart);
+        bitmapEnvelope = WatchUi.loadResource(Rez.Drawables.envelope);
         
         fontRussoOne14 = WatchUi.loadResource(Rez.Fonts.font_russo_one_14);
         fontRussoOne16 = WatchUi.loadResource(Rez.Fonts.font_russo_one_16);
@@ -190,12 +192,12 @@ class cara1View extends WatchUi.WatchFace {
                 }
                 
                 dims = dc.getTextDimensions(heartRate, fontRussoOne16);
-                dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);  
+                dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
                 dc.drawText(
                     ((cx - circleRadius) / 2),
-                    cy + 1, 
-                    fontRussoOne16, 
-                    heartRate, 
+                    cy + 1,
+                    fontRussoOne16,
+                    heartRate,
                     Graphics.TEXT_JUSTIFY_CENTER);
             }
         }
@@ -203,8 +205,46 @@ class cara1View extends WatchUi.WatchFace {
         //
         // Show notifications
         //
+        if (showHeartBeat) {
+            bx = dc.getWidth() - ((dc.getWidth() - (cx + circleRadius)) / 2) - (bitmapEnvelope.getWidth() / 2); 
+            by = cy - bitmapEnvelope.getHeight() - 1;
+            dc.drawBitmap(bx, by, bitmapEnvelope);
+
+            var msgCount = displayMsgCount()[0];
+            dims = dc.getTextDimensions(msgCount, fontRussoOne16);
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(
+                dc.getWidth() - ((dc.getWidth() - (cx + circleRadius)) / 2),
+                cy + 1,
+                fontRussoOne16,
+                msgCount,
+                Graphics.TEXT_JUSTIFY_CENTER);
+        }
     }
 
+
+    function displayMsgCount()
+    {
+        var ds = System.getDeviceSettings();
+        return (ds != null && ds.notificationCount != null)
+            ? [ds.notificationCount.format("%d"), "msg"]
+            : ["0", "msg"];
+    }
+/*
+    function displayPulse() {
+        var isUpdate = false;
+        var info = Activity.getActivityInfo();
+
+        if (info != null && info has :currentHeartRate && info.currentHeartRate != null && _heartRate != info.currentHeartRate)
+        {
+            _heartRate = info.currentHeartRate;
+            _heartRateText = (_heartRate < 100) ? _heartRate.toString() + "  " : _heartRate.toString();
+            isUpdate = true;
+        }
+
+        return [_heartRateText, "bpm", isUpdate];
+    }
+*/
     function drawSemiCircle(dc, x, y, radius, color, attr) {
         dc.setColor(color, color);
         dc.setPenWidth(2);
