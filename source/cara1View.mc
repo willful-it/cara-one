@@ -6,6 +6,7 @@ using Toybox.Application;
 using Toybox.ActivityMonitor;
 using Toybox.Time;
 using Toybox.Time.Gregorian;
+using Toybox.Sensor;
 
 class cara1View extends WatchUi.WatchFace {
 
@@ -168,7 +169,7 @@ class cara1View extends WatchUi.WatchFace {
 				showHeart = !showHeart;		
 				if (showHeart) {
 					bx = ((cx - circleRadius) / 2) - (bitmapHeart.getWidth() / 2); 
-			        by = cy - (bitmapHeart.getHeight() / 2);
+			        by = cy - bitmapHeart.getHeight() - 1;
 			        dc.drawBitmap(bx, by, bitmapHeart);
 			    }
  	        
@@ -178,30 +179,26 @@ class cara1View extends WatchUi.WatchFace {
 					var HRS = HRH.next();				
 								
 					if (HRS != null && HRS.heartRate != ActivityMonitor.INVALID_HR_SAMPLE) {					
-						heartRate = HRS.heartRate;
-						System.println("hr from history");			
+						heartRate = HRS.heartRate.toString() + "h";
 					}
 				} else {
-					System.println("hr from currentHeartRate");
+					heartRate = heartRate.toString() + "c";
 				}
 				
-				if (heartRate != null) {				
-					heartRate = heartRate.toString();				
-				} else {
-					heartRate = "--";			
+				if (heartRate == null) {
+					heartRate = "--";				
 				}
 				
-				System.println("hr is " + heartRate);
         		dims = dc.getTextDimensions(heartRate, fontRussoOne16);
         		dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);  
 				dc.drawText(
 					((cx - circleRadius) / 2), 
-					cy - (dims[1] / 2) + bitmapHeart.getHeight() + 2, 
+					cy + 1, 
 					fontRussoOne16, 
 					heartRate, 
 					Graphics.TEXT_JUSTIFY_CENTER);      				    		
     		}
-		}
+		}		
 	}
 
 	function drawSemiCircle(dc, x, y, radius, color, attr) {
