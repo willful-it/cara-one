@@ -15,12 +15,16 @@ class cara1View extends WatchUi.WatchFace {
 	var bitmapBattery075;
 	var bitmapBattery100;
 	var bitmapFire;
+	var bitmapHeart;
 
 	var fontRussoOne14;
 	var fontRussoOne16;
 	var fontRussoOne20;
 	var fontRussoOne24;
 	var fontRussoOne28;
+	
+	var showHeartBeat;
+	var showHeart;
 	    
     function initialize() {
         WatchFace.initialize();
@@ -31,12 +35,16 @@ class cara1View extends WatchUi.WatchFace {
 		bitmapBattery075 = WatchUi.loadResource(Rez.Drawables.battery_075);
 		bitmapBattery100 = WatchUi.loadResource(Rez.Drawables.battery_100);		
 		bitmapFire = WatchUi.loadResource(Rez.Drawables.fire);
+		bitmapHeart = WatchUi.loadResource(Rez.Drawables.heart);
 		
 		fontRussoOne14 = WatchUi.loadResource(Rez.Fonts.font_russo_one_14);
 		fontRussoOne16 = WatchUi.loadResource(Rez.Fonts.font_russo_one_16);
 		fontRussoOne20 = WatchUi.loadResource(Rez.Fonts.font_russo_one_20);
 		fontRussoOne24 = WatchUi.loadResource(Rez.Fonts.font_russo_one_24);
 		fontRussoOne28 = WatchUi.loadResource(Rez.Fonts.font_russo_one_28);
+		
+		showHeartBeat = true;
+		showHeart = true;
     }
 
     // Load your resources here
@@ -52,6 +60,8 @@ class cara1View extends WatchUi.WatchFace {
 
     // Update the view
     function onUpdate(dc) {        
+    	var circleRadius = 50;
+    	
         var cx = (dc.getWidth() / 2);
         var cy = (dc.getHeight() / 2);                    
         
@@ -66,8 +76,8 @@ class cara1View extends WatchUi.WatchFace {
 		//
 		// Circle
 		//                       			
-		drawSemiCircle(dc, cx, cy, 50, Graphics.COLOR_DK_GREEN, Toybox.Graphics.ARC_COUNTER_CLOCKWISE);
-    	drawSemiCircle(dc, cx, cy, 50, Graphics.COLOR_RED, Toybox.Graphics.ARC_CLOCKWISE);
+		drawSemiCircle(dc, cx, cy, circleRadius, Graphics.COLOR_DK_GREEN, Toybox.Graphics.ARC_COUNTER_CLOCKWISE);
+    	drawSemiCircle(dc, cx, cy, circleRadius, Graphics.COLOR_RED, Toybox.Graphics.ARC_CLOCKWISE);
     	
      	var w = 100;
      	var h = 12;
@@ -148,8 +158,50 @@ class cara1View extends WatchUi.WatchFace {
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);  
         var dims = dc.getTextDimensions(timeString, fontRussoOne28);
-		dc.drawText(cx, cy - 25 - (dims[1] / 2), fontRussoOne28, timeString, Graphics.TEXT_JUSTIFY_CENTER);      	
-     	
+		dc.drawText(cx, cy - 25 - (dims[1] / 2), fontRussoOne28, timeString, Graphics.TEXT_JUSTIFY_CENTER);      
+		
+		//
+		// Show heart beat
+		//
+		if (showHeartBeat) {		    
+ 	        if (ActivityMonitor has :getHeartRateHistory) { 	        
+				showHeart = !showHeart;		
+				if (showHeart) {
+					bx = ((cx - circleRadius) / 2) - (bitmapHeart.getWidth() / 2); 
+			        by = cy - (bitmapHeart.getHeight() / 2);
+			        dc.drawBitmap(bx, by, bitmapHeart);
+			    }
+ 	        
+				var heartRate = Activity.getActivityInfo().currentHeartRate;				
+				if (heartRate == null) {				
+					var HRH = ActivityMonitor.getHeartRateHistory(1, true);				
+					var HRS = HRH.next();				
+								
+					if (HRS != null && HRS.heartRate != ActivityMonitor.INVALID_HR_SAMPLE) {					
+						heartRate = HRS.heartRate;
+						System.println("hr from history");			
+					}
+				} else {
+					System.println("hr from currentHeartRate");
+				}
+				
+				if (heartRate != null) {				
+					heartRate = heartRate.toString();				
+				} else {
+					heartRate = "--";			
+				}
+				
+				System.println("hr is " + heartRate);
+        		dims = dc.getTextDimensions(heartRate, fontRussoOne16);
+        		dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);  
+				dc.drawText(
+					((cx - circleRadius) / 2), 
+					cy - (dims[1] / 2) + bitmapHeart.getHeight() + 2, 
+					fontRussoOne16, 
+					heartRate, 
+					Graphics.TEXT_JUSTIFY_CENTER);      				    		
+    		}
+		}
 	}
 
 	function drawSemiCircle(dc, x, y, radius, color, attr) {
@@ -174,10 +226,12 @@ class cara1View extends WatchUi.WatchFace {
 
     // The user has just looked at their watch. Timers and animations may be started here.
     function onExitSleep() {
+    	showHeartBeat = true;
     }
 
     // Terminate any active timers and prepare for slow updates.
     function onEnterSleep() {
+    	showHeartBeat = false;
     }
 
 }
