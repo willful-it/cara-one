@@ -8,7 +8,7 @@ using Toybox.Time;
 using Toybox.Time.Gregorian;
 using Toybox.Sensor;
 
-class cara1View extends WatchUi.WatchFace {
+class CaraOneView extends WatchUi.WatchFace {
 
     var bitmapBattery000; 
     var bitmapBattery025;

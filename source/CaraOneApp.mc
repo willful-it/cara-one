@@ -1,7 +1,7 @@
 using Toybox.Application;
 using Toybox.WatchUi;
 
-class cara1App extends Application.AppBase {
+class CaraOneApp extends Application.AppBase {
 
     function initialize() {
         AppBase.initialize();
@@ -17,7 +17,7 @@ class cara1App extends Application.AppBase {
 
     // Return the initial view of your application here
     function getInitialView() {
-        return [ new cara1View() ];
+        return [ new CaraOneView() ];
     }
 
     // New app settings have been received so trigger a UI update
