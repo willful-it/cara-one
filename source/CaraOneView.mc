@@ -19,13 +19,9 @@ class CaraOneView extends WatchUi.WatchFace {
     var bitmapHeart;
     var bitmapNotifcation;
     var bitmapSteps;
-
-    var fontXSmall;
-    var fontSmall;
-    var fontMedium;
-    var fontLarge;
     
     var showHeartBeat;
+    var font;
 
     function initialize() {
         WatchFace.initialize();
@@ -35,17 +31,31 @@ class CaraOneView extends WatchUi.WatchFace {
         bitmapBattery050 = WatchUi.loadResource(Rez.Drawables.battery_050);
         bitmapBattery075 = WatchUi.loadResource(Rez.Drawables.battery_075);
         bitmapBattery100 = WatchUi.loadResource(Rez.Drawables.battery_100);
-        bitmapFire = WatchUi.loadResource(Rez.Drawables.fire);
+        bitmapFire = WatchUi.loadResource(Rez.Drawables.fire);        
         bitmapHeart = WatchUi.loadResource(Rez.Drawables.heart);
         bitmapNotifcation = WatchUi.loadResource(Rez.Drawables.notifcation);
         bitmapSteps = WatchUi.loadResource(Rez.Drawables.steps);
-        
-        fontXSmall = WatchUi.loadResource(Rez.Fonts.font_xsmall);
-        fontSmall = WatchUi.loadResource(Rez.Fonts.font_small);
-        fontMedium = WatchUi.loadResource(Rez.Fonts.font_medium);
-        fontLarge = WatchUi.loadResource(Rez.Fonts.font_large);
-        
+
         showHeartBeat = true;
+
+        setFont();
+    }
+
+    function setFont() {
+
+        var propertyFont = Application.getApp().getProperty("Font");
+
+        if (font != null && propertyFont == font.id()) {
+            return;
+        }
+
+        if (propertyFont == 0) {
+        	System.println("Setting font to nova mono");
+            font = new FontNovaMono();
+        } else if (propertyFont == 1) {
+        	System.println("Setting font to aldo the apache"); 
+            font = new FontAldoTheApache();
+        }
     }
 
     // Load your resources here
@@ -61,6 +71,8 @@ class CaraOneView extends WatchUi.WatchFace {
 
     // Update the view
     function onUpdate(dc) {
+        setFont();
+
         var circleRadius = 50;
         var centralSize = 12;
         
@@ -116,9 +128,9 @@ class CaraOneView extends WatchUi.WatchFace {
         if (cals != null) {
             var calsString = cals.format("%d");
             dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-            var dims = dc.getTextDimensions(calsString, fontMedium);
-            dc.drawText(cx, cy + (dims[1] / 2), fontMedium, calsString, Graphics.TEXT_JUSTIFY_CENTER);            
-            dc.drawText(cx, cy + dims[1] + 5, fontXSmall, "kcal", Graphics.TEXT_JUSTIFY_CENTER);
+            var dims = dc.getTextDimensions(calsString, font.medium());
+            dc.drawText(cx, cy + (dims[1] / 2), font.medium(), calsString, Graphics.TEXT_JUSTIFY_CENTER);            
+            dc.drawText(cx, cy + dims[1] + 5, font.xsmall(), "kcal", Graphics.TEXT_JUSTIFY_CENTER);
         }
         
         //
@@ -134,8 +146,8 @@ class CaraOneView extends WatchUi.WatchFace {
         );
         
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        var dimsDate = dc.getTextDimensions(dateString, fontXSmall);
-        dc.drawText(cx + (dimsDate[0] / 2) + 15, cy - (dimsDate[1] / 2) - 1, fontXSmall, dateString, Graphics.TEXT_JUSTIFY_CENTER);
+        var dimsDate = dc.getTextDimensions(dateString, font.xsmall());
+        dc.drawText(cx + (dimsDate[0] / 2) + 15, cy - (dimsDate[1] / 2) - 1, font.xsmall(), dateString, Graphics.TEXT_JUSTIFY_CENTER);
 
         //
         // Time
@@ -157,8 +169,8 @@ class CaraOneView extends WatchUi.WatchFace {
         var timeString = Lang.format(timeFormat, [hours, clockTime.min.format("%02d")]);
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        var dims = dc.getTextDimensions(timeString, fontLarge);
-        dc.drawText(cx, cy - (circleRadius / 2) - (dims[1] / 2 ), fontLarge, timeString, Graphics.TEXT_JUSTIFY_CENTER);
+        var dims = dc.getTextDimensions(timeString, font.large());
+        dc.drawText(cx, cy - (circleRadius / 2) - (dims[1] / 2 ), font.large(), timeString, Graphics.TEXT_JUSTIFY_CENTER);
 
         //
         // Show heart beat
@@ -185,12 +197,12 @@ class CaraOneView extends WatchUi.WatchFace {
                     heartRate = "--";
                 }
                 
-                dims = dc.getTextDimensions(heartRate, fontSmall);
+                dims = dc.getTextDimensions(heartRate, font.small());
                 dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
                 dc.drawText(
                     ((cx - circleRadius) / 2),
                     cy + 1,
-                    fontSmall,
+                    font.small(),
                     heartRate,
                     Graphics.TEXT_JUSTIFY_CENTER);
             }
@@ -205,12 +217,12 @@ class CaraOneView extends WatchUi.WatchFace {
             dc.drawBitmap(bx, by, bitmapNotifcation);
 
             var msgCount = displayMsgCount()[0];
-            dims = dc.getTextDimensions(msgCount, fontSmall);
+            dims = dc.getTextDimensions(msgCount, font.small());
             dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
             dc.drawText(
                 dc.getWidth() - ((dc.getWidth() - (cx + circleRadius)) / 2),
                 cy + 1,
-                fontSmall,
+                font.small(),
                 msgCount,
                 Graphics.TEXT_JUSTIFY_CENTER);
         }
@@ -222,7 +234,7 @@ class CaraOneView extends WatchUi.WatchFace {
            	var ySpace = (dc.getHeight() - (circleRadius * 2)) / 2;
 
             var stepCount = ActivityMonitor.getInfo().steps.toString();
-            dims = dc.getTextDimensions(stepCount, fontSmall);
+            dims = dc.getTextDimensions(stepCount, font.small());
 
             var spaceSpace = (ySpace - (dims[1] + bitmapSteps.getHeight()));
 
@@ -236,7 +248,7 @@ class CaraOneView extends WatchUi.WatchFace {
             dc.drawText(
                 bx,
                 by,
-                fontSmall,
+                font.small(),
                 stepCount,
                 Graphics.TEXT_JUSTIFY_CENTER);
 
