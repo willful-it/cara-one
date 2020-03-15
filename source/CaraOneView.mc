@@ -46,23 +46,14 @@ class CaraOneView extends WatchUi.WatchFace {
         var propertyFont = Application.getApp().getProperty("Font");
         
         if (propertyFont == null || propertyFont < 0) {
-        	propertyFont = 0;
+        	propertyFont = FontBase.defaultId();
         }
 
-        if (font != null && propertyFont == font.id()) {
-            return;
+        if (font != null && propertyFont == font.id()) { // only loads the font
+            return;                                      // if neeed
         }
 
-        if (propertyFont == 0) {
-        	System.println("Setting font to nova mono");
-            font = new FontNovaMono();
-        } else if (propertyFont == 1) {
-        	System.println("Setting font to aldo the apache"); 
-            font = new FontAldoTheApache();
-        } else if (propertyFont == 2) {
-        	System.println("Setting font to poiret one"); 
-            font = new FontPoiretOne();
-        }
+        font = FontBase.buildFont(propertyFont);
     }
 
     // Load your resources here
