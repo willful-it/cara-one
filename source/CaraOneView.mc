@@ -44,6 +44,10 @@ class CaraOneView extends WatchUi.WatchFace {
     function setFont() {
 
         var propertyFont = Application.getApp().getProperty("Font");
+        
+        if (propertyFont == null) {
+        	propertyFont = 0;
+        }
 
         if (font != null && propertyFont == font.id()) {
             return;
