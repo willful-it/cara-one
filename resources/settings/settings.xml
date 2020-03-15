@@ -22,6 +22,7 @@
         <settingConfig type="list">
             <listEntry value="0">@Strings.FontNovaMono</listEntry>
             <listEntry value="1">@Strings.FontAldoTheApache</listEntry>
+            <listEntry value="2">@Strings.FontPoiretOne</listEntry>            
         </settingConfig>
     </setting>
 

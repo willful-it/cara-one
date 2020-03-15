@@ -45,7 +45,7 @@ class CaraOneView extends WatchUi.WatchFace {
 
         var propertyFont = Application.getApp().getProperty("Font");
         
-        if (propertyFont == null) {
+        if (propertyFont == null || propertyFont < 0) {
         	propertyFont = 0;
         }
 
@@ -59,6 +59,9 @@ class CaraOneView extends WatchUi.WatchFace {
         } else if (propertyFont == 1) {
         	System.println("Setting font to aldo the apache"); 
             font = new FontAldoTheApache();
+        } else if (propertyFont == 2) {
+        	System.println("Setting font to poiret one"); 
+            font = new FontPoiretOne();
         }
     }
 

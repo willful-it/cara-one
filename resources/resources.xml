@@ -8,4 +8,10 @@
 	<font id="font_novamono_small" filename="font-novamono-20.fnt"/>
 	<font id="font_novamono_medium" filename="font-novamono-24.fnt"/>
 	<font id="font_novamono_large" filename="font-novamono-32-bold.fnt"/>
+
+	<font id="font_poiretone_xsmall" filename="font-poiretone-16-bold.fnt"/>
+	<font id="font_poiretone_small" filename="font-poiretone-20-bold.fnt"/>
+	<font id="font_poiretone_medium" filename="font-poiretone-24-bold.fnt"/>
+	<font id="font_poiretone_large" filename="font-poiretone-30-bold.fnt"/>
+
 </fonts>
