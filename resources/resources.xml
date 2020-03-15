@@ -1,8 +1,6 @@
 <fonts>
-	<font id="custom_font_16" filename="font-16.fnt"/>
-	<font id="font_russo_one_14" filename="font-russo-one-14.fnt"/>
-	<font id="font_russo_one_16" filename="font-russo-one-16.fnt"/>
-	<font id="font_russo_one_20" filename="font-russo-one-20.fnt"/>
-	<font id="font_russo_one_24" filename="font-russo-one-24.fnt"/>
-	<font id="font_russo_one_28" filename="font-russo-one-28.fnt"/>
+	<font id="font_xsmall" filename="font-novamono-16.fnt"/>
+	<font id="font_small" filename="font-novamono-20.fnt"/>
+	<font id="font_medium" filename="font-novamono-24.fnt"/>
+	<font id="font_large" filename="font-novamono-32-bold.fnt"/>
 </fonts>

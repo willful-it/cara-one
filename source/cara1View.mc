@@ -17,16 +17,14 @@ class cara1View extends WatchUi.WatchFace {
     var bitmapBattery100;
     var bitmapFire;
     var bitmapHeart;
-    var bitmapEnvelope;
+    var bitmapNotifcation;
 
-    var fontRussoOne14;
-    var fontRussoOne16;
-    var fontRussoOne20;
-    var fontRussoOne24;
-    var fontRussoOne28;
+    var fontXSmall;
+    var fontSmall;
+    var fontMedium;
+    var fontLarge;
     
     var showHeartBeat;
-    var showHeart;
 
     function initialize() {
         WatchFace.initialize();
@@ -38,16 +36,14 @@ class cara1View extends WatchUi.WatchFace {
         bitmapBattery100 = WatchUi.loadResource(Rez.Drawables.battery_100);
         bitmapFire = WatchUi.loadResource(Rez.Drawables.fire);
         bitmapHeart = WatchUi.loadResource(Rez.Drawables.heart);
-        bitmapEnvelope = WatchUi.loadResource(Rez.Drawables.envelope);
+        bitmapNotifcation = WatchUi.loadResource(Rez.Drawables.notifcation);
         
-        fontRussoOne14 = WatchUi.loadResource(Rez.Fonts.font_russo_one_14);
-        fontRussoOne16 = WatchUi.loadResource(Rez.Fonts.font_russo_one_16);
-        fontRussoOne20 = WatchUi.loadResource(Rez.Fonts.font_russo_one_20);
-        fontRussoOne24 = WatchUi.loadResource(Rez.Fonts.font_russo_one_24);
-        fontRussoOne28 = WatchUi.loadResource(Rez.Fonts.font_russo_one_28);
+        fontXSmall = WatchUi.loadResource(Rez.Fonts.font_xsmall);
+        fontSmall = WatchUi.loadResource(Rez.Fonts.font_small);
+        fontMedium = WatchUi.loadResource(Rez.Fonts.font_medium);
+        fontLarge = WatchUi.loadResource(Rez.Fonts.font_large);
         
         showHeartBeat = true;
-        showHeart = true;
     }
 
     // Load your resources here
@@ -64,6 +60,7 @@ class cara1View extends WatchUi.WatchFace {
     // Update the view
     function onUpdate(dc) {
         var circleRadius = 50;
+        var centralSize = 12;
         
         var cx = (dc.getWidth() / 2);
         var cy = (dc.getHeight() / 2);
@@ -82,8 +79,8 @@ class cara1View extends WatchUi.WatchFace {
         drawSemiCircle(dc, cx, cy, circleRadius, Graphics.COLOR_DK_GREEN, Toybox.Graphics.ARC_COUNTER_CLOCKWISE);
         drawSemiCircle(dc, cx, cy, circleRadius, Graphics.COLOR_RED, Toybox.Graphics.ARC_CLOCKWISE);
         
-         var w = 100;
-         var h = 12;
+         var w = (circleRadius * 2) + 1;
+         var h = centralSize;
          dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
          dc.fillRectangle(cx - (w/2), cy - (h/2), w, h);
          
@@ -117,11 +114,9 @@ class cara1View extends WatchUi.WatchFace {
         if (cals != null) {
             var calsString = cals.format("%d");
             dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-            var dims = dc.getTextDimensions(calsString, fontRussoOne20);
-            dc.drawText(cx, cy + (dims[1] / 2), fontRussoOne20, calsString, Graphics.TEXT_JUSTIFY_CENTER);
-            
-            dims = dc.getTextDimensions("kcal", fontRussoOne16);
-            dc.drawText(cx, cy + (dims[1] * 1.5), fontRussoOne16, "kcal", Graphics.TEXT_JUSTIFY_CENTER);
+            var dims = dc.getTextDimensions(calsString, fontMedium);
+            dc.drawText(cx, cy + (dims[1] / 2), fontMedium, calsString, Graphics.TEXT_JUSTIFY_CENTER);            
+            dc.drawText(cx, cy + dims[1] + 5, fontXSmall, "kcal", Graphics.TEXT_JUSTIFY_CENTER);
         }
         
         //
@@ -137,8 +132,8 @@ class cara1View extends WatchUi.WatchFace {
         );
         
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        var dimsDate = dc.getTextDimensions(dateString, fontRussoOne14);
-        dc.drawText(cx + (dimsDate[0] / 2) + 15, cy - (dimsDate[1] / 2), fontRussoOne14, dateString, Graphics.TEXT_JUSTIFY_CENTER);
+        var dimsDate = dc.getTextDimensions(dateString, fontXSmall);
+        dc.drawText(cx + (dimsDate[0] / 2) + 15, cy - (dimsDate[1] / 2) - 1, fontXSmall, dateString, Graphics.TEXT_JUSTIFY_CENTER);
 
         //
         // Time
@@ -160,20 +155,17 @@ class cara1View extends WatchUi.WatchFace {
         var timeString = Lang.format(timeFormat, [hours, clockTime.min.format("%02d")]);
 
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
-        var dims = dc.getTextDimensions(timeString, fontRussoOne28);
-        dc.drawText(cx, cy - 25 - (dims[1] / 2), fontRussoOne28, timeString, Graphics.TEXT_JUSTIFY_CENTER);
+        var dims = dc.getTextDimensions(timeString, fontLarge);
+        dc.drawText(cx, cy - (circleRadius / 2) - (dims[1] / 2 ), fontLarge, timeString, Graphics.TEXT_JUSTIFY_CENTER);
 
         //
         // Show heart beat
         //
         if (showHeartBeat) {
              if (ActivityMonitor has :getHeartRateHistory) {
-                showHeart = !showHeart;
-                if (showHeart) {
-                    bx = ((cx - circleRadius) / 2) - (bitmapHeart.getWidth() / 2); 
-                    by = cy - bitmapHeart.getHeight() - 1;
-                    dc.drawBitmap(bx, by, bitmapHeart);
-                }
+                bx = ((cx - circleRadius) / 2) - (bitmapHeart.getWidth() / 2); 
+                by = cy - bitmapHeart.getHeight() - 1;
+                dc.drawBitmap(bx, by, bitmapHeart);
              
                 var heartRate = Activity.getActivityInfo().currentHeartRate;
                 if (heartRate == null) {
@@ -181,22 +173,22 @@ class cara1View extends WatchUi.WatchFace {
                     var HRS = HRH.next();
 
                     if (HRS != null && HRS.heartRate != ActivityMonitor.INVALID_HR_SAMPLE) {
-                        heartRate = HRS.heartRate.toString() + "h";
+                        heartRate = HRS.heartRate.toString();
                     }
                 } else {
-                    heartRate = heartRate.toString() + "c";
+                    heartRate = heartRate.toString();
                 }
                 
                 if (heartRate == null) {
                     heartRate = "--";
                 }
                 
-                dims = dc.getTextDimensions(heartRate, fontRussoOne16);
+                dims = dc.getTextDimensions(heartRate, fontSmall);
                 dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
                 dc.drawText(
                     ((cx - circleRadius) / 2),
                     cy + 1,
-                    fontRussoOne16,
+                    fontSmall,
                     heartRate,
                     Graphics.TEXT_JUSTIFY_CENTER);
             }
@@ -206,17 +198,17 @@ class cara1View extends WatchUi.WatchFace {
         // Show notifications
         //
         if (showHeartBeat) {
-            bx = dc.getWidth() - ((dc.getWidth() - (cx + circleRadius)) / 2) - (bitmapEnvelope.getWidth() / 2); 
-            by = cy - bitmapEnvelope.getHeight() - 1;
-            dc.drawBitmap(bx, by, bitmapEnvelope);
+            bx = dc.getWidth() - ((dc.getWidth() - (cx + circleRadius)) / 2) - (bitmapNotifcation.getWidth() / 2); 
+            by = cy - bitmapNotifcation.getHeight() - 1;
+            dc.drawBitmap(bx, by, bitmapNotifcation);
 
             var msgCount = displayMsgCount()[0];
-            dims = dc.getTextDimensions(msgCount, fontRussoOne16);
+            dims = dc.getTextDimensions(msgCount, fontSmall);
             dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
             dc.drawText(
                 dc.getWidth() - ((dc.getWidth() - (cx + circleRadius)) / 2),
                 cy + 1,
-                fontRussoOne16,
+                fontSmall,
                 msgCount,
                 Graphics.TEXT_JUSTIFY_CENTER);
         }
