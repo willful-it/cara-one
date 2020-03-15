@@ -18,6 +18,13 @@
         </settingConfig>
     </setting>
 
+    <setting propertyKey="@Properties.Font" title="@Strings.FontTitle">
+        <settingConfig type="list">
+            <listEntry value="0">@Strings.FontNovaMono</listEntry>
+            <listEntry value="1">@Strings.FontAldoTheApache</listEntry>
+        </settingConfig>
+    </setting>
+
     <setting propertyKey="@Properties.UseMilitaryFormat" title="@Strings.MilitaryFormatTitle">
         <settingConfig type="boolean" />
     </setting>
