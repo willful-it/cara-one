@@ -8,4 +8,5 @@
     <bitmap id="fire" filename="fire.png" />
     <bitmap id="heart" filename="heartbeat.png" />
     <bitmap id="notifcation" filename="envelope.png" />       
+    <bitmap id="steps" filename="step.png" />
 </drawables>

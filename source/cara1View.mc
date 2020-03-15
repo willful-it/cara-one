@@ -18,6 +18,7 @@ class cara1View extends WatchUi.WatchFace {
     var bitmapFire;
     var bitmapHeart;
     var bitmapNotifcation;
+    var bitmapSteps;
 
     var fontXSmall;
     var fontSmall;
@@ -37,6 +38,7 @@ class cara1View extends WatchUi.WatchFace {
         bitmapFire = WatchUi.loadResource(Rez.Drawables.fire);
         bitmapHeart = WatchUi.loadResource(Rez.Drawables.heart);
         bitmapNotifcation = WatchUi.loadResource(Rez.Drawables.notifcation);
+        bitmapSteps = WatchUi.loadResource(Rez.Drawables.steps);
         
         fontXSmall = WatchUi.loadResource(Rez.Fonts.font_xsmall);
         fontSmall = WatchUi.loadResource(Rez.Fonts.font_small);
@@ -212,6 +214,34 @@ class cara1View extends WatchUi.WatchFace {
                 msgCount,
                 Graphics.TEXT_JUSTIFY_CENTER);
         }
+        
+        //
+        // Steps
+        //
+        if (showHeartBeat) {
+           	var ySpace = (dc.getHeight() - (circleRadius * 2)) / 2;
+
+            var stepCount = ActivityMonitor.getInfo().steps.toString();
+            dims = dc.getTextDimensions(stepCount, fontSmall);
+
+            var spaceSpace = (ySpace - (dims[1] + bitmapSteps.getHeight()));
+
+            bx = cx - (bitmapNotifcation.getWidth() / 2); 
+            by = spaceSpace / 2;
+            dc.drawBitmap(bx, by, bitmapSteps);
+
+            bx = cx;
+            by = by + dims[1]; 
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(
+                bx,
+                by,
+                fontSmall,
+                stepCount,
+                Graphics.TEXT_JUSTIFY_CENTER);
+
+        }
+        
     }
 
 
