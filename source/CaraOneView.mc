@@ -10,6 +10,13 @@ using Toybox.Sensor;
 
 class CaraOneView extends WatchUi.WatchFace {
 
+    var POSITION_TOP = :top;
+    var POSITION_LEFT = :left;
+    var POSITION_RIGHT = :right;
+
+    var circleRadius = 50;
+    var centralSize = 12;
+
     var bitmapBattery000; 
     var bitmapBattery025;
     var bitmapBattery050;
@@ -71,9 +78,6 @@ class CaraOneView extends WatchUi.WatchFace {
     function onUpdate(dc) {
         setFont();
 
-        var circleRadius = 50;
-        var centralSize = 12;
-        
         var cx = (dc.getWidth() / 2);
         var cy = (dc.getHeight() / 2);
         
@@ -224,36 +228,52 @@ class CaraOneView extends WatchUi.WatchFace {
                 msgCount,
                 Graphics.TEXT_JUSTIFY_CENTER);
         }
-        
-        //
-        // Steps
-        //
+
         if (showHeartBeat) {
-           	var ySpace = (dc.getHeight() - (circleRadius * 2)) / 2;
-
-            var stepCount = ActivityMonitor.getInfo().steps.toString();
-            dims = dc.getTextDimensions(stepCount, font.small());
-
-            var spaceSpace = (ySpace - (dims[1] + bitmapSteps.getHeight()));
-
-            bx = cx - (bitmapNotifcation.getWidth() / 2); 
-            by = spaceSpace / 2;
-            dc.drawBitmap(bx, by, bitmapSteps);
-
-            bx = cx;
-            by = by + dims[1]; 
-            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(
-                bx,
-                by,
-                font.small(),
-                stepCount,
-                Graphics.TEXT_JUSTIFY_CENTER);
-
+            drawSteps(dc, POSITION_TOP);
         }
         
     }
 
+    function drawSteps(dc, position) {
+        var stepCount = ActivityMonitor.getInfo().steps.toString();
+
+        var coords = getCoords(dc, position, bitmapSteps, stepCount);
+        var iconX = coords[0];
+        var iconY = coords[1];
+        var textX = coords[2];
+        var textY = coords[3];
+
+        dc.drawBitmap(iconX, iconY, bitmapSteps);
+
+        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(
+            textX,
+            textY,
+            font.small(),
+            stepCount,
+            Graphics.TEXT_JUSTIFY_CENTER);
+    }
+
+    function getCoords(dc, position, bitmap, text) {
+        var coords = new [4];
+
+        var cx = (dc.getWidth() / 2);
+        var cy = (dc.getHeight() / 2);
+
+        if (position == POSITION_TOP) {
+            var ySpace = (dc.getHeight() - (circleRadius * 2)) / 2;
+            var dims = dc.getTextDimensions(text, font.small());
+            var spaceSpace = (ySpace - (dims[1] + bitmap.getHeight()));
+
+            coords[0] = cx - (bitmap.getWidth() / 2); 
+            coords[1] = spaceSpace / 2;
+            coords[2] = cx;
+            coords[3] = coords[1] + dims[1]; 
+        }
+
+        return coords;
+    }
 
     function displayMsgCount()
     {
