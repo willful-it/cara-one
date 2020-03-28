@@ -30,6 +30,9 @@ class CaraOneView extends WatchUi.WatchFace {
     var showHeartBeat;
     var font;
 
+    var cx;
+    var cy;
+
     function initialize() {
         WatchFace.initialize();
         
@@ -38,12 +41,15 @@ class CaraOneView extends WatchUi.WatchFace {
         bitmapBattery050 = WatchUi.loadResource(Rez.Drawables.battery_050);
         bitmapBattery075 = WatchUi.loadResource(Rez.Drawables.battery_075);
         bitmapBattery100 = WatchUi.loadResource(Rez.Drawables.battery_100);
-        bitmapFire = WatchUi.loadResource(Rez.Drawables.fire);        
+        bitmapFire = WatchUi.loadResource(Rez.Drawables.fire);
         bitmapHeart = WatchUi.loadResource(Rez.Drawables.heart);
         bitmapNotifcation = WatchUi.loadResource(Rez.Drawables.notifcation);
         bitmapSteps = WatchUi.loadResource(Rez.Drawables.steps);
 
         showHeartBeat = true;
+
+        cx = (dc.getWidth() / 2);
+        cy = (dc.getHeight() / 2);
 
         setFont();
     }
@@ -77,34 +83,24 @@ class CaraOneView extends WatchUi.WatchFace {
     // Update the view
     function onUpdate(dc) {
         setFont();
+        setBackground(dc);
 
-        var cx = (dc.getWidth() / 2);
-        var cy = (dc.getHeight() / 2);
-        
-        var textColor = Application.getApp().getProperty("ForegroundColor");
-        
-        //
-        // Background
-        //
+        drawVinylCenter(dc);
+        drawBateryInfo(dc);
+        drawCaloriesInfo(dc);
+        drawDate(dc);
+        drawTime(dc);
+        drawHeartbeat(dc);
+        drawNotifications(dc);
+        drawSteps(dc, POSITION_TOP);
+    }
+
+    function setBackground(dc) {
         dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_BLACK);
         dc.clear();
+    }
 
-        //
-        // Circle
-        //
-        drawSemiCircle(dc, cx, cy, circleRadius, Graphics.COLOR_DK_GREEN, Toybox.Graphics.ARC_COUNTER_CLOCKWISE);
-        drawSemiCircle(dc, cx, cy, circleRadius, Graphics.COLOR_RED, Toybox.Graphics.ARC_CLOCKWISE);
-        
-         var w = (circleRadius * 2) + 1;
-         var h = centralSize;
-         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
-         dc.fillRectangle(cx - (w/2), cy - (h/2), w, h);
-         
-         drawCircle(dc, cx, cy, 4, Graphics.COLOR_BLACK);
-         
-        //
-        // Battery
-        //
+    function drawBateryInfo(dc) {
         var myStats = System.getSystemStats();
         var bitmap;
         if (myStats.battery >= 88.5) {
@@ -122,10 +118,9 @@ class CaraOneView extends WatchUi.WatchFace {
         var bx = cx - 28 - (bitmap.getWidth() / 2);
         var by = cy - (bitmap.getHeight() / 2);
         dc.drawBitmap(bx, by, bitmap);
-        
-        //
-        // Calories
-        //
+    }
+
+    function drawCaloriesInfo(dc) {
         var cals = ActivityMonitor.getInfo().calories;
         if (cals != null) {
             var calsString = cals.format("%d");
@@ -134,10 +129,9 @@ class CaraOneView extends WatchUi.WatchFace {
             dc.drawText(cx, cy + (dims[1] / 2), font.medium(), calsString, Graphics.TEXT_JUSTIFY_CENTER);            
             dc.drawText(cx, cy + dims[1] + 5, font.xsmall(), "kcal", Graphics.TEXT_JUSTIFY_CENTER);
         }
-        
-        //
-        // Date
-        //
+    }
+
+    function drawDate(dc) {
         var today = Gregorian.info(Time.now(), Time.FORMAT_SHORT);
         var dateString = Lang.format(
             "$1$-$2$",
@@ -150,7 +144,9 @@ class CaraOneView extends WatchUi.WatchFace {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         var dimsDate = dc.getTextDimensions(dateString, font.xsmall());
         dc.drawText(cx + (dimsDate[0] / 2) + 15, cy - (dimsDate[1] / 2) - 1, font.xsmall(), dateString, Graphics.TEXT_JUSTIFY_CENTER);
+    }
 
+    function drawTime(dc) {
         //
         // Time
         //
@@ -174,13 +170,25 @@ class CaraOneView extends WatchUi.WatchFace {
         var dims = dc.getTextDimensions(timeString, font.large());
         dc.drawText(cx, cy - (circleRadius / 2) - (dims[1] / 2 ), font.large(), timeString, Graphics.TEXT_JUSTIFY_CENTER);
 
-        //
-        // Show heart beat
-        //
+    }
+
+    function drawVinylCenter(dc) {
+        drawSemiCircle(dc, cx, cy, circleRadius, Graphics.COLOR_DK_GREEN, Toybox.Graphics.ARC_COUNTER_CLOCKWISE);
+        drawSemiCircle(dc, cx, cy, circleRadius, Graphics.COLOR_RED, Toybox.Graphics.ARC_CLOCKWISE);
+        
+         var w = (circleRadius * 2) + 1;
+         var h = centralSize;
+         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
+         dc.fillRectangle(cx - (w/2), cy - (h/2), w, h);
+         
+         drawCircle(dc, cx, cy, 4, Graphics.COLOR_BLACK);
+    }
+
+    function drawHeartbeat(dc) {
         if (showHeartBeat) {
              if (ActivityMonitor has :getHeartRateHistory) {
-                bx = ((cx - circleRadius) / 2) - (bitmapHeart.getWidth() / 2); 
-                by = cy - bitmapHeart.getHeight() - 1;
+                var bx = ((cx - circleRadius) / 2) - (bitmapHeart.getWidth() / 2); 
+                var by = cy - bitmapHeart.getHeight() - 1;
                 dc.drawBitmap(bx, by, bitmapHeart);
              
                 var heartRate = Activity.getActivityInfo().currentHeartRate;
@@ -199,7 +207,7 @@ class CaraOneView extends WatchUi.WatchFace {
                     heartRate = "--";
                 }
                 
-                dims = dc.getTextDimensions(heartRate, font.small());
+                var dims = dc.getTextDimensions(heartRate, font.small());
                 dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
                 dc.drawText(
                     ((cx - circleRadius) / 2),
@@ -209,17 +217,16 @@ class CaraOneView extends WatchUi.WatchFace {
                     Graphics.TEXT_JUSTIFY_CENTER);
             }
         }
-        
-        //
-        // Show notifications
-        //
+    }
+
+    function drawNotifications(dc) {
         if (showHeartBeat) {
-            bx = dc.getWidth() - ((dc.getWidth() - (cx + circleRadius)) / 2) - (bitmapNotifcation.getWidth() / 2); 
-            by = cy - bitmapNotifcation.getHeight() - 1;
+            var bx = dc.getWidth() - ((dc.getWidth() - (cx + circleRadius)) / 2) - (bitmapNotifcation.getWidth() / 2); 
+            var by = cy - bitmapNotifcation.getHeight() - 1;
             dc.drawBitmap(bx, by, bitmapNotifcation);
 
             var msgCount = displayMsgCount()[0];
-            dims = dc.getTextDimensions(msgCount, font.small());
+            var dims = dc.getTextDimensions(msgCount, font.small());
             dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
             dc.drawText(
                 dc.getWidth() - ((dc.getWidth() - (cx + circleRadius)) / 2),
@@ -229,30 +236,28 @@ class CaraOneView extends WatchUi.WatchFace {
                 Graphics.TEXT_JUSTIFY_CENTER);
         }
 
-        if (showHeartBeat) {
-            drawSteps(dc, POSITION_TOP);
-        }
-        
     }
 
     function drawSteps(dc, position) {
-        var stepCount = ActivityMonitor.getInfo().steps.toString();
+        if (showHeartBeat) {
+            var stepCount = ActivityMonitor.getInfo().steps.toString();
 
-        var coords = getCoords(dc, position, bitmapSteps, stepCount);
-        var iconX = coords[0];
-        var iconY = coords[1];
-        var textX = coords[2];
-        var textY = coords[3];
+            var coords = getCoords(dc, position, bitmapSteps, stepCount);
+            var iconX = coords[0];
+            var iconY = coords[1];
+            var textX = coords[2];
+            var textY = coords[3];
 
-        dc.drawBitmap(iconX, iconY, bitmapSteps);
+            dc.drawBitmap(iconX, iconY, bitmapSteps);
 
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(
-            textX,
-            textY,
-            font.small(),
-            stepCount,
-            Graphics.TEXT_JUSTIFY_CENTER);
+            dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(
+                textX,
+                textY,
+                font.small(),
+                stepCount,
+                Graphics.TEXT_JUSTIFY_CENTER);
+        }
     }
 
     function getCoords(dc, position, bitmap, text) {
